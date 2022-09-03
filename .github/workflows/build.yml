@@ -25,5 +25,7 @@ jobs:
     - name: Build with Script
       run: |
         echo "Staring build"
-        echo "Android sdk location: [${ANDROID_SDK}] or possibly [${ANDROID_SDK_ROOT}]"
+        echo "Android sdk location: [${ANDROID_SDK_ROOT}]"
+        export ANDROID_SDK=${ANDROID_SDK_ROOT}
+        echo "SDk Check: ANDROID_SDK=${ANDROID_SDK}"
         ./build.sh -p
