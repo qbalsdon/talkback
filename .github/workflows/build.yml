@@ -18,8 +18,12 @@ jobs:
       with:
         java-version: 1.8
 
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
     - name: Build with Script
       run: |
         echo "Staring build"
-        echo "Android sdk location: ${ANDROID_SDK}"
+        echo "Android sdk location: [${ANDROID_SDK}]"
         ./build.sh -p
