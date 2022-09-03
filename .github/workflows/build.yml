@@ -21,4 +21,4 @@ jobs:
         cache: gradle
 
     - name: Build with Script
-      run: ./build.sh
+      run: ./build.sh -p

@@ -8,11 +8,13 @@
 
 INSTALL=false
 DEVICE=""
+PIPELINE=false
 USAGE="./build.sh [-i] [-s | --device SERIAL_NUMBER]\n\ti\t: install to phone\n\t-s\t: android serial number, if there is more than one device"
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -i) INSTALL=true; ;;
         -s|--device) DEVICE="-s $2"; shift ;;
+        -p) PIPELINE=true; shift ;;
         -h|--help) echo $USAGE; exit 0 ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
@@ -59,11 +61,10 @@ echo "ndk.dir=${ANDROID_NDK}" >> local.properties
 log "cat local.properties"; cat local.properties
 log
 
-#JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-#JAVA_HOME=/Users/quintinb/Library/Java/JavaVirtualMachines/azul-16.0.2/Contents/Home
-#export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
-unset JAVA_HOME;
-export JAVA_HOME=$(/usr/libexec/java_home -v"1.8");
+if [[ "$PIPELINE" = true ]]; then
+  unset JAVA_HOME;
+  export JAVA_HOME=$(/usr/libexec/java_home -v"1.8");
+fi
 
 if [[ -z "${JAVA_HOME}" ]]; then
   fail_with_message "JAVA_HOME environment variable is unset. It should be set to a Java 8 SDK (in order for the license acceptance to work)"
