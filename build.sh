@@ -101,8 +101,9 @@ log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_Z
 if [[ "$PIPELINE" = false ]]; then
   wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
 else
-  echo "\t!! Pipeline version !!"
+  echo "    !! Pipeline version !!"
   COMMAND="wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
+  echo "    {$COMMAND}"
   sudo /bin/sh -c "${COMMAND}"
 fi
 log
