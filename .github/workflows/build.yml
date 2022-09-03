@@ -27,5 +27,7 @@ jobs:
         echo "Staring build"
         echo "Android sdk location: [${ANDROID_SDK_ROOT}]"
         export ANDROID_SDK=${ANDROID_SDK_ROOT}
-        echo "SDk Check: ANDROID_SDK=${ANDROID_SDK}"
+        echo "SDK Check: ANDROID_SDK=${ANDROID_SDK}"
+        echo "-----------------------------------------------------"
+        echo "JAVA HOME: [${JAVA_HOME}]"
         ./build.sh -p
