@@ -30,4 +30,6 @@ jobs:
         echo "SDK Check: ANDROID_SDK=${ANDROID_SDK}"
         echo "-----------------------------------------------------"
         echo "JAVA HOME: [${JAVA_HOME}]"
+        echo "-----------------------------------------------------"
+        echo "BUILD START"
         ./build.sh -p

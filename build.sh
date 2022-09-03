@@ -61,7 +61,7 @@ echo "ndk.dir=${ANDROID_NDK}" >> local.properties
 log "cat local.properties"; cat local.properties
 log
 
-if [[ "$PIPELINE" = true ]]; then
+if [[ "$PIPELINE" = false ]]; then
   unset JAVA_HOME;
   export JAVA_HOME=$(/usr/libexec/java_home -v"1.8");
 fi
