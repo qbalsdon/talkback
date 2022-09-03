@@ -19,4 +19,7 @@ jobs:
         java-version: 1.8
 
     - name: Build with Script
-      run: ./build.sh -p
+      run: |
+        echo "Staring build"
+        echo "Android sdk location: ${ANDROID_SDK}"
+        ./build.sh -p
