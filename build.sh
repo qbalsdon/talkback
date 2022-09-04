@@ -102,9 +102,10 @@ if [[ "$PIPELINE" = false ]]; then
   wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
 else
   echo "    !! Pipeline version !!"
-  COMMAND="wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
-  echo "    {$COMMAND}"
-  sudo /bin/sh -c "${COMMAND}"
+  COMMAND="curl -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
+  echo "    ${COMMAND}"
+#  sudo /bin/sh -c "${COMMAND}"
+  curl -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
 fi
 log
 
