@@ -101,14 +101,14 @@ log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_Z
 if [[ "$PIPELINE" = false ]]; then
   wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
 else
+  GRADLE_ZIP_DEST_PATH=~/tmp/${GRADLE_DOWNLOAD_VERSION}.zip
+  mkdir ~/tmp
   echo "    !! Pipeline version !!"
   COMMAND="curl -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
   echo "    ${COMMAND}"
-#  sudo /bin/sh -c "${COMMAND}"
   curl -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
 fi
 log
-
 
 GRADLE_UNZIP_HOSTING_FOLDER=/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
 log "Unzip gradle zipfile ${GRADLE_ZIP_DEST_PATH} to ${GRADLE_UNZIP_HOSTING_FOLDER}"
