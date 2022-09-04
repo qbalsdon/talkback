@@ -122,7 +122,9 @@ else
 fi
 log
 
-
+log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+log "\${JAVA_HOME}: ${JAVA_HOME}"
+log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 GRADLE_BINARY=${GRADLE_UNZIP_HOSTING_FOLDER}/gradle-${GRADLE_DOWNLOAD_VERSION}/bin/gradle
 log "\${GRADLE_BINARY} = ${GRADLE_BINARY}"
