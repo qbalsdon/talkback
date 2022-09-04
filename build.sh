@@ -112,7 +112,7 @@ else
   echo "    !! Pipeline version !!"
   COMMAND="curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
   echo "    ${COMMAND}"
-  sudo curl -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+  sudo curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
   ls -ln ~/tmp
 
   GRADLE_UNZIP_HOSTING_FOLDER=~/tmp/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
