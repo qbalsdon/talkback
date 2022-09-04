@@ -84,20 +84,13 @@ if [[ $ACCEPT_SDK_LICENSES_EXIT_CODE -ne 0 ]]; then
   fail_with_message "Build Error: SDK license acceptance failed. This can happen if your JAVA_HOME is not set to Java 8"
 fi
 
-
-# Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
-sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
-log "\${JAVA_HOME}: ${JAVA_HOME}"
-log "ls \${JAVA_HOME}:"; ls "${JAVA_HOME}"
-log "java -version:"; java -version
-log "javac -version:"; javac -version
-log
-
-
 GRADLE_ZIP_REMOTE_FILE=gradle-${GRADLE_DOWNLOAD_VERSION}-bin.zip
 GRADLE_ZIP_DEST_PATH=~/Desktop/${GRADLE_DOWNLOAD_VERSION}.zip
 if [[ "$PIPELINE" = false ]]; then
+  # Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
+  sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
+  export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
+
   log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using wget"
   wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
   GRADLE_UNZIP_HOSTING_FOLDER=/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
@@ -124,6 +117,10 @@ log
 
 log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 log "\${JAVA_HOME}: ${JAVA_HOME}"
+log "ls \${JAVA_HOME}:"; ls "${JAVA_HOME}"
+log "java -version:"; java -version
+log "javac -version:"; javac -version
+log
 log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 GRADLE_BINARY=${GRADLE_UNZIP_HOSTING_FOLDER}/gradle-${GRADLE_DOWNLOAD_VERSION}/bin/gradle
