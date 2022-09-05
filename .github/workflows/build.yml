@@ -45,8 +45,8 @@ jobs:
         BUILD_TOOLS=33.0.0
         BUILD_TOOLS_PATH=${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS}
         ALIAS=${{ secrets.ALIAS }}
-        INPUT_FILE_PHONE=./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
-        INPUT_FILE_WEAR=./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
+        INPUT_FILE_PHONE=./build/outputs/apk/phone/release/talkback-phone-release-unsigned-${{ github.run_number }}.apk
+        INPUT_FILE_WEAR=./build/outputs/apk/wear/release/talkback-wear-release-unsigned-${{ github.run_number }}.apk
         OUTPUT_FILE_PHONE="talkback-phone-release-signed.apk"
         OUTPUT_FILE_WEAR="talkback-wear-release-signed.apk"
 
