@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +20,7 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
-    - name: Build with Script
+    - name: Run Build Script
       run: |
         echo "Staring build"
         echo "Android sdk location: [${ANDROID_SDK_ROOT}]"
@@ -39,7 +38,7 @@ jobs:
         ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
         pwd
         ls
-    - name: Sign Artifacts
+    - name: Sign Phone and Wear Artifacts
       run: |
         SIGNING_KEY=${{ secrets.SIGNING_KEY }}
         SIGNING_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
@@ -67,13 +66,13 @@ jobs:
         echo "SIGNED_WEAR_ARTIFACT=${OUTPUT_FILE_WEAR}" >> $GITHUB_ENV
         echo "---------------------------------------------"
 
-    - name: Upload Mobile App
+    - name: Upload Mobile App Artifact
       uses: actions/upload-artifact@v2
       with:
         name: app-phone-signed-${{ github.run_number }}.apk
         path: ${{ env.SIGNED_PHONE_ARTIFACT }}
 
-    - name: Upload Wear App
+    - name: Upload Wear App Artifact
       uses: actions/upload-artifact@v2
       with:
         name: app-wear-signed-${{ github.run_number }}.apk
