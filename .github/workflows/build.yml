@@ -60,7 +60,7 @@ jobs:
         echo "---------------------------------------------"
 
         echo "SIGNING WEAR APK"
-        ${BUILD_TOOLS_PATH}/zipalign -f 4 ${INPUT_FILE_WEAR} ${OUTPUT_FILE_WEAR}
+        ${BUILD_TOOLS_PATH}/zipalign -p -f 4 ${INPUT_FILE_WEAR} ${OUTPUT_FILE_WEAR}
         ${BUILD_TOOLS_PATH}/apksigner sign -ks talkback_keystore.jks --v1-signing-enabled true --v2-signing-enabled true --ks-key-alias ${ALIAS} --ks-pass pass:${SIGNING_PASSWORD} --key-pass pass:${SIGNING_PASSWORD} ${OUTPUT_FILE_WEAR}
         ${BUILD_TOOLS_PATH}/apksigner verify ${OUTPUT_FILE_WEAR}
         echo "SIGNED_WEAR_ARTIFACT=${OUTPUT_FILE_WEAR}" >> $GITHUB_ENV
