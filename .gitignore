@@ -1,2 +1,4 @@
 # Ignore the build directory
 build/
+.gradle/
+.idea/
