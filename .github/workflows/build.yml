@@ -53,13 +53,15 @@ jobs:
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_STORE_PASSWORD }}
 
-    - uses: actions/upload-artifact@v2
-        with:
-          name: app-signed-${{ github.run_number }}.apk
-          path: ${{steps.sign_mobile_app.outputs.signedReleaseFile}}
+    - name: Upload Mobile App
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-signed-${{ github.run_number }}.apk
+        path: ${{steps.sign_mobile_app.outputs.signedReleaseFile}}
 
-    - uses: actions/upload-artifact@v2
-        with:
-          name: app-signed-${{ github.run_number }}.apk
-          path: ${{steps.sign_wearos_app.outputs.signedReleaseFile}}
+    - name: Upload WearOS App
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-signed-${{ github.run_number }}.apk
+        path: ${{steps.sign_wearos_app.outputs.signedReleaseFile}}
 
