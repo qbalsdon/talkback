@@ -37,6 +37,16 @@ jobs:
         echo "ARTIFACT INFORMATION"
         ls -ln ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
         ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
+        pwd
+        ls
+
+    - name: Show Artifacts - before upload
+      run: |
+        echo "-------"
+        ls -ln ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
+        ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
+        echo "-------"
+        echo "If this passes then upload is not required"
 
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v3
@@ -48,10 +58,6 @@ jobs:
 
     - name: Sign Android App
       uses: r0adkll/sign-android-release@v1
-      run: |
-        echo "SIGN ATTEMPT"
-        pwd
-        ls
       id: sign_mobile_app
       with:
         releaseDirectory: ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
