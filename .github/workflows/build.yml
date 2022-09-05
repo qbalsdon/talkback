@@ -53,7 +53,7 @@ jobs:
         echo "${SIGNING_KEY}" | base64 --decode > talkback_keystore.jks
 
         echo "SIGNING PHONE APK"
-        ${BUILD_TOOLS_PATH}/zipalign -f 4 ${INPUT_FILE_PHONE} ${OUTPUT_FILE_PHONE}
+        ${BUILD_TOOLS_PATH}/zipalign -p -f 4 ${INPUT_FILE_PHONE} ${OUTPUT_FILE_PHONE}
         ${BUILD_TOOLS_PATH}/apksigner sign -ks talkback_keystore.jks --v1-signing-enabled true --v2-signing-enabled true --ks-key-alias ${ALIAS} --ks-pass pass:${SIGNING_PASSWORD} --key-pass pass:${SIGNING_PASSWORD} ${OUTPUT_FILE_PHONE}
         ${BUILD_TOOLS_PATH}/apksigner verify ${OUTPUT_FILE_PHONE}
         echo "SIGNED_PHONE_ARTIFACT=${OUTPUT_FILE_PHONE}" >> $GITHUB_ENV
