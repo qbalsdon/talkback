@@ -43,51 +43,39 @@ jobs:
       run: |
         SIGNING_KEY=${{ secrets.SIGNING_KEY }}
         SIGNING_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
+        BUILD_TOOLS=33.0.0
+        BUILD_TOOLS_PATH=${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS}
         ALIAS=${{ secrets.ALIAS }}
-        INPUT_FILE=./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
-        ls -ln $INPUT_FILE
+        INPUT_FILE_PHONE=./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
+        INPUT_FILE_WEAR=./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
+        OUTPUT_FILE_PHONE="talkback-phone-release-signed.apk"
+        OUTPUT_FILE_WEAR="talkback-wear-release-signed.apk"
+
         echo "${SIGNING_KEY}" | base64 --decode > talkback_keystore.jks
-        cat talkback_keystore.jks
 
-        echo "~~~~~~~~~~~~"
+        echo "SIGNING PHONE APK"
+        ${BUILD_TOOLS_PATH}/zipalign -f 4 ${INPUT_FILE_PHONE} ${OUTPUT_FILE_PHONE}
+        ${BUILD_TOOLS_PATH}/apksigner sign -ks talkback_keystore.jks --v1-signing-enabled true --v2-signing-enabled true --ks-key-alias ${ALIAS} --ks-pass pass:${SIGNING_PASSWORD} --key-pass pass:${SIGNING_PASSWORD} ${OUTPUT_FILE_PHONE}
+        ${BUILD_TOOLS_PATH}/apksigner verify ${OUTPUT_FILE_PHONE}
+        echo "SIGNED_PHONE_ARTIFACT=${OUTPUT_FILE_PHONE}" >> $GITHUB_ENV
+        echo "---------------------------------------------"
 
-        ls ${ANDROID_SDK_ROOT}/build-tools
-
-        ANDROID_PATH=${ANDROID_SDK_ROOT}/build-tools/32.1.0-rc1
-        OUTPUT_FILE="talkback-phone-release-signed.apk"
-        ${ANDROID_PATH}/zipalign -f 4 ${INPUT_FILE} ${OUTPUT_FILE}
-        ${ANDROID_PATH}/apksigner sign -ks talkback_keystore.jks --v1-signing-enabled true --v2-signing-enabled true --ks-key-alias ${ALIAS} --ks-pass pass:${SIGNING_PASSWORD} --key-pass pass:${SIGNING_PASSWORD} ${OUTPUT_FILE}
-        ${ANDROID_PATH}/apksigner verify talkback-phone-release-signed.apk
-
-    - name: Sign Android App
-      uses: r0adkll/sign-android-release@v1
-      id: sign_mobile_app
-      with:
-        releaseDirectory: ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
-        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-        keyPassword: ${{ secrets.KEY_STORE_PASSWORD }}
-
-    - name: Sign Wear App
-      uses: r0adkll/sign-android-release@v1
-      id: sign_wear_app
-      with:
-        releaseDirectory: ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
-        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-        keyPassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        echo "SIGNING WEAR APK"
+        ${BUILD_TOOLS_PATH}/zipalign -f 4 ${INPUT_FILE_WEAR} ${OUTPUT_FILE_WEAR}
+        ${BUILD_TOOLS_PATH}/apksigner sign -ks talkback_keystore.jks --v1-signing-enabled true --v2-signing-enabled true --ks-key-alias ${ALIAS} --ks-pass pass:${SIGNING_PASSWORD} --key-pass pass:${SIGNING_PASSWORD} ${OUTPUT_FILE_WEAR}
+        ${BUILD_TOOLS_PATH}/apksigner verify ${OUTPUT_FILE_WEAR}
+        echo "SIGNED_WEAR_ARTIFACT=${OUTPUT_FILE_WEAR}" >> $GITHUB_ENV
+        echo "---------------------------------------------"
 
     - name: Upload Mobile App
       uses: actions/upload-artifact@v2
       with:
         name: app-phone-signed-${{ github.run_number }}.apk
-        path: ${{steps.sign_mobile_app.outputs.signedReleaseFile}}
+        path: ${{ env.SIGNED_PHONE_ARTIFACT }}
 
     - name: Upload Wear App
       uses: actions/upload-artifact@v2
       with:
         name: app-wear-signed-${{ github.run_number }}.apk
-        path: ${{steps.sign_wear_app.outputs.signedReleaseFile}}
+        path: ${{ env.SIGNED_WEAR_ARTIFACT }}
 
