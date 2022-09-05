@@ -23,7 +23,10 @@ on, toggle the switch preference to the on position.
 
 ```shell 
 # Activate
+adb shell settings put secure enabled_accessibility_services com.android.talkback4d/com.developer.talkback.TalkBackDevService
 
+# #Deactivate
+adb shell settings put secure enabled_accessibility_services null
 
 # General format
 # All commands take the format of a broadcast
