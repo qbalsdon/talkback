@@ -21,7 +21,7 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-GRADLE_DOWNLOAD_VERSION=5.4.1
+GRADLE_DOWNLOAD_VERSION=7.4.2
 GRADLE_TRACE=false   # change to true to enable verbose logging of gradlew
 
 
