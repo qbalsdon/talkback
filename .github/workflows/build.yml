@@ -39,7 +39,7 @@ jobs:
         ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
         pwd
         ls
-    - name: Manual sign
+    - name: Sign Artifacts
       run: |
         SIGNING_KEY=${{ secrets.SIGNING_KEY }}
         SIGNING_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
