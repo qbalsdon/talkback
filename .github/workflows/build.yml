@@ -32,12 +32,17 @@ jobs:
         echo "-----------------------------------------------------"
         echo "BUILD START"
         ./build.sh -p
+        echo "BUILD COMPLETE"
+        echo "-----------------------------------------------------"
+        echo "ARTIFACT INFORMATION"
+        ls -ln ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
+        ls -ln ./build/outputs/apk/phone/release/talkback-wear-release-unsigned.apk
 
     - name: Sign Android App
       uses: r0adkll/sign-android-release@v1
       id: sign_mobile_app
       with:
-        releaseDirectory: /build/outputs/apk/phone/release/***-phone-release-unsigned.apk
+        releaseDirectory: ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -47,7 +52,7 @@ jobs:
       uses: r0adkll/sign-android-release@v1
       id: sign_wear_app
       with:
-        releaseDirectory: /build/outputs/apk/phone/release/***-wear-release-unsigned.apk
+        releaseDirectory: ./build/outputs/apk/phone/release/talkback-wear-release-unsigned.apk
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
