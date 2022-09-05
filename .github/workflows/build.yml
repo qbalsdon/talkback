@@ -37,7 +37,7 @@ jobs:
       uses: r0adkll/sign-android-release@v1
       id: sign_mobile_app
       with:
-        releaseDirectory: build/outputs/apk/phone/debug/talkback-phone-debug.apk
+        releaseDirectory: ./build/outputs/apk/phone/debug/talkback-phone-debug.apk
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -47,7 +47,7 @@ jobs:
       uses: r0adkll/sign-android-release@v1
       id: sign_wearos_app
       with:
-        releaseDirectory: build/outputs/apk/phone/debug/talkback-wear-release-unsigned.apk
+        releaseDirectory: ./build/outputs/apk/phone/debug/talkback-wear-release-unsigned.apk
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
