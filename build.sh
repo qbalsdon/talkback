@@ -8,18 +8,20 @@
 
 INSTALL=false
 DEVICE=""
+PIPELINE=false
 USAGE="./build.sh [-i] [-s | --device SERIAL_NUMBER]\n\ti\t: install to phone\n\t-s\t: android serial number, if there is more than one device"
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -i) INSTALL=true; ;;
         -s|--device) DEVICE="-s $2"; shift ;;
+        -p) PIPELINE=true; shift ;;
         -h|--help) echo $USAGE; exit 0 ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
 done
 
-GRADLE_DOWNLOAD_VERSION=5.4.1
+GRADLE_DOWNLOAD_VERSION=7.4.2
 GRADLE_TRACE=false   # change to true to enable verbose logging of gradlew
 
 
@@ -59,11 +61,10 @@ echo "ndk.dir=${ANDROID_NDK}" >> local.properties
 log "cat local.properties"; cat local.properties
 log
 
-#JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-#JAVA_HOME=/Users/quintinb/Library/Java/JavaVirtualMachines/azul-16.0.2/Contents/Home
-#export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
-unset JAVA_HOME;
-export JAVA_HOME=$(/usr/libexec/java_home -v"1.8");
+if [[ "$PIPELINE" = false ]]; then
+  unset JAVA_HOME;
+  export JAVA_HOME=$(/usr/libexec/java_home -v"1.8");
+fi
 
 if [[ -z "${JAVA_HOME}" ]]; then
   fail_with_message "JAVA_HOME environment variable is unset. It should be set to a Java 8 SDK (in order for the license acceptance to work)"
@@ -83,29 +84,44 @@ if [[ $ACCEPT_SDK_LICENSES_EXIT_CODE -ne 0 ]]; then
   fail_with_message "Build Error: SDK license acceptance failed. This can happen if your JAVA_HOME is not set to Java 8"
 fi
 
+GRADLE_ZIP_REMOTE_FILE=gradle-${GRADLE_DOWNLOAD_VERSION}-bin.zip
+GRADLE_ZIP_DEST_PATH=~/Desktop/${GRADLE_DOWNLOAD_VERSION}.zip
+if [[ "$PIPELINE" = false ]]; then
+  # Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
+  sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
+  export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
 
-# Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
-sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
+  log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using wget"
+  wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+  GRADLE_UNZIP_HOSTING_FOLDER=/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
+  log "Unzip gradle zipfile ${GRADLE_ZIP_DEST_PATH} to ${GRADLE_UNZIP_HOSTING_FOLDER}"
+  sudo unzip -n -d ${GRADLE_UNZIP_HOSTING_FOLDER} ${GRADLE_ZIP_DEST_PATH}
+  log
+else
+  mkdir ~/tmp
+  mkdir ~/tmp/opt
+  GRADLE_ZIP_DEST_PATH=~/tmp/${GRADLE_DOWNLOAD_VERSION}.zip
+  log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using curl"
+  echo "    !! Pipeline version !!"
+  COMMAND="curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
+  echo "    ${COMMAND}"
+  sudo curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+  ls -ln ~/tmp
+
+  GRADLE_UNZIP_HOSTING_FOLDER=~/tmp/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
+  log "Unzip gradle zipfile ${GRADLE_ZIP_DEST_PATH} to ${GRADLE_UNZIP_HOSTING_FOLDER}"
+  sudo unzip -n -d ${GRADLE_UNZIP_HOSTING_FOLDER} ${GRADLE_ZIP_DEST_PATH}
+  log
+fi
+log
+
+log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 log "\${JAVA_HOME}: ${JAVA_HOME}"
 log "ls \${JAVA_HOME}:"; ls "${JAVA_HOME}"
 log "java -version:"; java -version
 log "javac -version:"; javac -version
 log
-
-
-GRADLE_ZIP_REMOTE_FILE=gradle-${GRADLE_DOWNLOAD_VERSION}-bin.zip
-GRADLE_ZIP_DEST_PATH=~/Desktop/${GRADLE_DOWNLOAD_VERSION}.zip
-log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using wget"
-wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
-log
-
-
-GRADLE_UNZIP_HOSTING_FOLDER=/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
-log "Unzip gradle zipfile ${GRADLE_ZIP_DEST_PATH} to ${GRADLE_UNZIP_HOSTING_FOLDER}"
-sudo unzip -n -d ${GRADLE_UNZIP_HOSTING_FOLDER} ${GRADLE_ZIP_DEST_PATH}
-log
-
+log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 GRADLE_BINARY=${GRADLE_UNZIP_HOSTING_FOLDER}/gradle-${GRADLE_DOWNLOAD_VERSION}/bin/gradle
 log "\${GRADLE_BINARY} = ${GRADLE_BINARY}"
