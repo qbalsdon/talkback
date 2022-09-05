@@ -53,6 +53,8 @@
     </option>
   </component>
   <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../keys/talkback/talkback_keystore.jks" />
+    <option name="KEY_ALIAS" value="talkback" />
     <option name="BUILD_TARGET_KEY" value="apk" />
   </component>
   <component name="HighlightingSettingsPerFile">

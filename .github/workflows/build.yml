@@ -39,22 +39,25 @@ jobs:
         ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
         pwd
         ls
-
-    - name: Show Artifacts - before upload
+    - name: Manual sign
       run: |
-        echo "-------"
-        ls -ln ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
-        ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
-        echo "-------"
-        echo "If this passes then upload is not required"
+        INPUT_FILE=./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
+        ls -ln $INPUT_FILE
+        echo "Here is the password: [${SIGNING_PASSWORD}] and ALIAS: [${ALIAS}]"
+        base64 –decode ${SIGNING_KEY} talkback_keystore.jks
 
-    - name: Archive Build Artifacts
-      uses: actions/upload-artifact@v3
+        ls ${ANDROID_SDK_ROOT}/build-tools
+
+        ANDROID_PATH=${ANDROID_SDK_ROOT}/build-tools/32.1.0-rc1
+        OUTPUT_FILE="talkback-phone-release-signed.apk"
+        ${ANDROID_PATH}/zipalign -f 4 ${INPUT_FILE} ${OUTPUT_FILE}
+        ${ANDROID_PATH}/apksigner sign -ks talkback_keystore.jks --v1-signing-enabled true --v2-signing-enabled true --ks-key-alias ${ALIAS} --ks-pass pass:${SIGNING_PASSWORD} --key-pass pass:${SIGNING_PASSWORD} ${OUTPUT_FILE}
+        ${ANDROID_PATH}/apksigner verify talkback-phone-release-signed.apk
+
       with:
-        name: unsigned-files
-        path: |
-          ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
-          ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
+        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        SIGNING_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+        ALIAS: ${{ secrets.ALIAS }}
 
     - name: Sign Android App
       uses: r0adkll/sign-android-release@v1

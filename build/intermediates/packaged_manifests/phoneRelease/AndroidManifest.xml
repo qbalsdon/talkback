@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.talkback4d"
-    android:versionName="TfGH_release_12_2-2022_09_04_1648" >
+    android:versionName="TfGH_release_12_2-2022_09_05_1530" >
 
     <uses-sdk
         android:minSdkVersion="26"
-        android:targetSdkVersion="30" />
+        android:targetSdkVersion="33" />
 
     <!--
   Strings with the format ${foo}, such as ${applicationId}, are called
