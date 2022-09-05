@@ -48,6 +48,10 @@ jobs:
 
     - name: Sign Android App
       uses: r0adkll/sign-android-release@v1
+      run: |
+        echo "SIGN ATTEMPT"
+        pwd
+        ls
       id: sign_mobile_app
       with:
         releaseDirectory: ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
