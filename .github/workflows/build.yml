@@ -46,9 +46,10 @@ jobs:
         ALIAS=${{ secrets.ALIAS }}
         INPUT_FILE=./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
         ls -ln $INPUT_FILE
-        echo "Here is the password: [--${SIGNING_PASSWORD}--] and ALIAS: [==${ALIAS}==]"
-        base64 –decode ${SIGNING_KEY} talkback_keystore.jks
+        echo "${SIGNING_KEY}" | base64 --decode > talkback_keystore.jks
         cat talkback_keystore.jks
+
+        echo "~~~~~~~~~~~~"
 
         ls ${ANDROID_SDK_ROOT}/build-tools
 
