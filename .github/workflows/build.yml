@@ -18,7 +18,6 @@ jobs:
       with:
         java-version: 1.11
 
-
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
@@ -33,3 +32,34 @@ jobs:
         echo "-----------------------------------------------------"
         echo "BUILD START"
         ./build.sh -p
+
+    - name: Sign Android App
+      uses: r0adkll/sign-android-release@v1
+      id: sign_mobile_app
+      with:
+        releaseDirectory: build/outputs/apk/phone/debug/talkback-phone-debug.apk
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_STORE_PASSWORD }}
+
+    - name: Sign WearOS App
+      uses: r0adkll/sign-android-release@v1
+      id: sign_wearos_app
+      with:
+        releaseDirectory: build/outputs/apk/phone/debug/talkback-wear-release-unsigned.apk
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_STORE_PASSWORD }}
+
+    - uses: actions/upload-artifact@v2
+        with:
+          name: app-signed-${{ github.run_number }}.apk
+          path: ${{steps.sign_mobile_app.outputs.signedReleaseFile}}
+
+    - uses: actions/upload-artifact@v2
+        with:
+          name: app-signed-${{ github.run_number }}.apk
+          path: ${{steps.sign_wearos_app.outputs.signedReleaseFile}}
+
