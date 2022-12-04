@@ -37,7 +37,7 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId talkbackApplicationId
-        versionName talkbackVersionName + "-" + BUILD_TIMESTAMP
+        versionName talkbackVersionName + "-" + BUILD_TIMESTAMP + "-" + talkbackForDevVersionName
         manifestPlaceholders = [talkbackMainPermission:talkbackMainPermission]
         minSdkVersion 26
         targetSdkVersion 33

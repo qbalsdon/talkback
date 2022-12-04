@@ -1,5 +1,7 @@
 # Introduction
 
+![A chat bubble with zeros and ones and a green background][100]
+
 This repository contains **forked** source code for Google's TalkBack, which is a screen
 reader for blind and visually-impaired users of Android. For usage instructions,
 see
@@ -21,7 +23,7 @@ on, toggle the switch preference to the on position.
 
 ### How to use with ADB
 
-```shell 
+```shell
 # Activate
 adb shell settings put secure enabled_accessibility_services com.android.talkback4d/com.developer.talkback.TalkBackDevService
 
@@ -48,7 +50,7 @@ BROADCAST -a com.a11y.adb.volume_toggle # special case that toggles between 5% a
 ```
 
 ## All parameters
-- [Action list][0] 
+- [Action list][0]
 - [Action parameter list in the SelectorController enum][1]
 - [Developer settings][2]
 - [Volume specific controls][3]
@@ -56,7 +58,7 @@ BROADCAST -a com.a11y.adb.volume_toggle # special case that toggles between 5% a
 ### Personal Notes
 
 ```jenv local 1.8``` <-- Need to do this if build fails
-```./build.sh && adb install ./build/outputs/apk/phone/debug/talkback-phone-debug.apk```
+```./build.sh && adb -s $PIXEL7 install ./build/outputs/apk/phone/debug/talkback-phone-debug.apk```
 
 My computer is using jenv to manage the JAVA_HOME etc so be ready with that
 
@@ -81,3 +83,5 @@ Java 11 is not a problem, just use it everywhere. Running `java -version` was in
 [2]: https://github.com/qbalsdon/talkback/blob/master/talkback/src/main/java/com/google/android/accessibility/talkback/adb/ToggleDeveloperSetting.kt
 [3]: https://github.com/qbalsdon/talkback/blob/master/talkback/src/main/java/com/google/android/accessibility/talkback/adb/VolumeControl.kt
 
+[100]: /images/icon_512.png "TalkBack for developers"
+{: height="200px"}

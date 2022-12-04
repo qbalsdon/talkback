@@ -1,1 +1,2 @@
 ext { talkbackVersionName = "TfGH_release_12_2" }
+ext { talkbackForDevVersionName = "TB4D_0_0_1" }
