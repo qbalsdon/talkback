@@ -6,8 +6,24 @@
 ###   JAVA_HOME             # path to local copy of Java SDK. Should be Java 8.
 # On gLinux, use 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64'
 
+#-----------------------------------------------------------------------------
+INSTALL=false
+DEVICE=""
+PIPELINE=false
+USAGE="./build.sh [-i] [-s | --device SERIAL_NUMBER]\n\ti\t: install to phone\n\t-s\t: android serial number, if there is more than one device"
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -i) INSTALL=true; ;;
+        -s|--device) DEVICE="-s $2"; shift ;;
+        -p) PIPELINE=true; shift ;;
+        -h|--help) echo $USAGE; exit 0 ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+#-----------------------------------------------------------------------------
 
-GRADLE_DOWNLOAD_VERSION=5.4.1
+GRADLE_DOWNLOAD_VERSION=6.7.1
 GRADLE_TRACE=false   # change to true to enable verbose logging of gradlew
 
 
@@ -59,6 +75,12 @@ echo "ndk.dir=${ANDROID_NDK}" >> local.properties
 log "cat local.properties"; cat local.properties
 log
 
+#-----------------------------------------------------------------------------
+if [[ "$PIPELINE" = false ]]; then
+  unset JAVA_HOME;
+  export JAVA_HOME=$(/usr/libexec/java_home -v"1.8");
+fi
+#-----------------------------------------------------------------------------
 
 if [[ -z "${JAVA_HOME}" ]]; then
   fail_with_message "JAVA_HOME environment variable is unset. It should be set to a Java 8 SDK (in order for the license acceptance to work)"
@@ -79,9 +101,14 @@ if [[ $ACCEPT_SDK_LICENSES_EXIT_CODE -ne 0 ]]; then
 fi
 
 
-# Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
-sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
+if [[ "$PIPELINE" = true ]]; then
+  # Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
+  sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
+  export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
+else
+  unset JAVA_HOME;
+  export JAVA_HOME=$(/usr/libexec/java_home -v"11");
+fi
 log "\${JAVA_HOME}: ${JAVA_HOME}"
 log "ls \${JAVA_HOME}:"; ls "${JAVA_HOME}"
 log "java -version:"; java -version
@@ -91,9 +118,16 @@ log
 
 GRADLE_ZIP_REMOTE_FILE=gradle-${GRADLE_DOWNLOAD_VERSION}-bin.zip
 GRADLE_ZIP_DEST_PATH=~/Desktop/${GRADLE_DOWNLOAD_VERSION}.zip
-log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using wget"
-wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
-log
+
+if [[ "$PIPELINE" = true ]]; then
+  log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using wget"
+  wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+  log
+else
+  log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using curl"
+  COMMAND="curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
+  sudo curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+fi
 
 
 GRADLE_UNZIP_HOSTING_FOLDER=/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
