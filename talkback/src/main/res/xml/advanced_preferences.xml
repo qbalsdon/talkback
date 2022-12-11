@@ -23,6 +23,7 @@
         android:defaultValue="@bool/pref_single_tap_default"
         android:key="@string/pref_single_tap_key"
         android:summary="@string/summary_pref_single_tap"
+        app:defaultValue="@bool/pref_single_tap_default"
         android:title="@string/title_pref_single_tap" />
     <!-- Description order -->
     <ListPreference

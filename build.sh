@@ -7,14 +7,12 @@
 # On gLinux, use 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64'
 
 #-----------------------------------------------------------------------------
-INSTALL=false
 DEVICE=""
 PIPELINE=false
-USAGE="./build.sh [-i] [-s | --device SERIAL_NUMBER]\n\ti\t: install to phone\n\t-s\t: android serial number, if there is more than one device"
+USAGE="./build.sh [[-s | --device] SERIAL_NUMBER]"
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        -i) INSTALL=true; ;;
-        -s|--device) DEVICE="-s $2"; shift ;;
+        -s|--device) DEVICE="$2"; shift ;;
         -p) PIPELINE=true; shift ;;
         -h|--help) echo $USAGE; exit 0 ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
@@ -101,11 +99,7 @@ if [[ $ACCEPT_SDK_LICENSES_EXIT_CODE -ne 0 ]]; then
 fi
 
 
-if [[ "$PIPELINE" = true ]]; then
-  # Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
-  sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-  export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
-else
+if [[ "$PIPELINE" = false ]]; then
   unset JAVA_HOME;
   export JAVA_HOME=$(/usr/libexec/java_home -v"11");
 fi
@@ -119,20 +113,26 @@ log
 GRADLE_ZIP_REMOTE_FILE=gradle-${GRADLE_DOWNLOAD_VERSION}-bin.zip
 GRADLE_ZIP_DEST_PATH=~/Desktop/${GRADLE_DOWNLOAD_VERSION}.zip
 
-if [[ "$PIPELINE" = true ]]; then
-  log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using wget"
-  wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
-  log
-else
-  log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using curl"
-  COMMAND="curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
-  sudo curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+GRADLE_UNZIP_HOSTING_FOLDER=/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
+if [[ ! -f "$GRADLE_ZIP_DEST_PATH" ]]; then
+  log "--> Downloading GRADLE"
+  if [[ "$PIPELINE" = true ]]; then
+    mkdir ~/tmp
+    mkdir ~/tmp/opt
+    GRADLE_ZIP_DEST_PATH=~/tmp/${GRADLE_DOWNLOAD_VERSION}.zip
+    GRADLE_UNZIP_HOSTING_FOLDER=~/tmp/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
+    log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using wget"
+    wget -O ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+    log
+  else
+    log "Download gradle binary from the web ${GRADLE_ZIP_REMOTE_FILE} to ${GRADLE_ZIP_DEST_PATH} using curl"
+    COMMAND="curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}"
+    sudo curl -L -o ${GRADLE_ZIP_DEST_PATH} https://services.gradle.org/distributions/${GRADLE_ZIP_REMOTE_FILE}
+  fi
 fi
 
-
-GRADLE_UNZIP_HOSTING_FOLDER=/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
 log "Unzip gradle zipfile ${GRADLE_ZIP_DEST_PATH} to ${GRADLE_UNZIP_HOSTING_FOLDER}"
-sudo unzip -n -d ${GRADLE_UNZIP_HOSTING_FOLDER} ${GRADLE_ZIP_DEST_PATH}
+unzip -n -d ${GRADLE_UNZIP_HOSTING_FOLDER} ${GRADLE_ZIP_DEST_PATH}
 log
 
 
@@ -182,5 +182,9 @@ if [[ $BUILD_EXIT_CODE -eq 0 ]]; then
   log
 fi
 
+if [[ ! -z $DEVICE ]]; then
+  log "installing on $DEVICE"
+  adb -s $DEVICE install ./build/outputs/apk/phone/debug/talkback-phone-debug.apk
+fi
 
 exit $BUILD_EXIT_CODE   ### This should be the last line in this file

@@ -65,6 +65,17 @@ public abstract class PreferencesActivity extends BasePreferencesActivity {
     }
   }
 
+  // INFO: TalkBack For Developers modification
+  @Override
+  public boolean onSupportNavigateUp() {
+    return onNavigateUp();
+  }
+
+  @Override
+  public void onBackPressed() {
+    onNavigateUp();
+  }
+
   /**
    * If action-bar "navigate up" button is pressed, end this sub-activity when there is no fragment
    * in the stack. Otherwise, it will go to last fragment.

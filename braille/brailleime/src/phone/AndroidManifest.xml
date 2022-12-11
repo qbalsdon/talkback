@@ -25,13 +25,14 @@
           android:name="android.view.im"
           android:resource="@xml/braille_ime" />
     </service>
+    <!-- INFO: TalkBack For Developers modification-->
     <activity
         android:name="com.google.android.accessibility.brailleime.settings.BrailleImePreferencesActivity"
         android:configChanges="orientation|screenSize"
         android:exported="true"
         android:label="@string/braille_keyboard"
         android:launchMode="singleTop"
-        android:taskAffinity="com.google.android.accessibility.talkback.SettingsAffinity"
+        android:taskAffinity="com.google.android.accessibility.talkback4d.SettingsAffinity"
         android:theme="@style/SettingsTheme"
         tools:ignore="ExportedActivity"
         >

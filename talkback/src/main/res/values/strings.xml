@@ -3,14 +3,14 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!--The human-readable name of this service. Do not translate. -->
-    <string name="talkback_title" translatable="false">TalkBack_TfP</string>
+    <string name="talkback_title" translatable="false">TalkBack For Developers</string>
 
     <!--
       Source: A brief description of TalkBack.
       Description: This is presented to the user on the accessibility settings view. [CHAR LIMIT=NONE]
     -->
     <string name="talkback_service_description">
-      When TalkBack is on, it provides spoken feedback so that you can use your device without looking at the screen. This can be helpful for people who are blind or have low vision.\n\nTalkback has braille support, and uses Bluetooth to help you connect with a braille display.\n\nTo navigate using TalkBack:\n•  Swipe right or left to move between items\n•  Double-tap to activate an item\n•  Drag two fingers to scroll\n\nTo turn off TalkBack:\n•  Tap the switch. You’ll see a green outline. Double-tap the switch.\n•  On the confirmation message, tap OK. Then double-tap OK.
+      Welcome to TalkBack for Developers!\n\nTalkBack For Developers is a custom fork of Google\'s TalkBack. It allows developers to interace with TalkBack using adb command line controls rather than gestures. It is feature complete to TalkBack, and you should be able to use it as you would TalkBack.\n\n\n\nWhen TalkBack is on, it provides spoken feedback so that you can use your device without looking at the screen. This can be helpful for people who are blind or have low vision.\n\nTalkback has braille support, and uses Bluetooth to help you connect with a braille display.\n\nTo navigate using TalkBack:\n•  Swipe right or left to move between items\n•  Double-tap to activate an item\n•  Drag two fingers to scroll\n\nTo turn off TalkBack:\n•  Tap the switch. You’ll see a green outline. Double-tap the switch.\n•  On the confirmation message, tap OK. Then double-tap OK.
     </string>
 
     <!-- TODO: Try to remove nbsp following li. -->
@@ -19,7 +19,7 @@
       Description: This is presented in html to the user on the accessibility settings view. [CHAR_LIMIT=NONE]
     -->
     <string name="talkback_service_html_description">
-      <![CDATA[When Talkback is on, it provides spoken feedback so that you can use your device without looking at the screen. Talkback is intended for situations or people who have difficulty seeing the screen.<br><br>Talkback has braille support, and uses Bluetooth to help you connect with a braille display.<br><br><b>How to use Talkback</b><br>• Swipe right or left to move between items<br>• Double-tap to activate an item<br>• Drag 2 fingers to scroll<br><br><b>How to turn off Talkback</b><br><br><b>Volume Keys:</b> Press &amp\; hold both volume keys for a few seconds.<br><br><b>Settings</b><br>• Tap the <b>Use Talkback</b> switch. You&apos\;ll see a green outline. Double-tap the switch.<br>• On the confirmation message, tap stop. Then double-tap Stop.]]>
+      <![CDATA[Welcome to TalkBack for Developers!<br><br>TalkBack For Developers is a custom fork of Google\'s TalkBack. It allows developers to interace with TalkBack using adb command line controls rather than gestures. It is feature complete to TalkBack, and you should be able to use it as you would TalkBack.<br><hr><br>When Talkback is on, it provides spoken feedback so that you can use your device without looking at the screen. Talkback is intended for situations or people who have difficulty seeing the screen.<br><br>Talkback has braille support, and uses Bluetooth to help you connect with a braille display.<br><br><b>How to use Talkback</b><br>• Swipe right or left to move between items<br>• Double-tap to activate an item<br>• Drag 2 fingers to scroll<br><br><b>How to turn off Talkback</b><br><br><b>Volume Keys:</b> Press &amp\; hold both volume keys for a few seconds.<br><br><b>Settings</b><br>• Tap the <b>Use Talkback</b> switch. You&apos\;ll see a green outline. Double-tap the switch.<br>• On the confirmation message, tap stop. Then double-tap Stop.]]>
     </string>
 
     <!--
@@ -32,7 +32,8 @@
       Source: Title for the activity that manages TalkBack settings.
       Description: This is presented to the user when managing TalkBack settings. [CHAR_LIMIT=NONE]
     -->
-    <string name="talkback_preferences_title">TalkBack settings</string>
+    <!-- INFO: TalkBack For Developers modification-->
+    <string name="talkback_preferences_title">TalkBack For Devs settings</string>
     <!--
       Source: Title for the activity that manages Text to speech settings.
       Description: This is presented to the user when managing Text to speech settings. [CHAR LIMIT=NONE]
@@ -487,7 +488,7 @@
          settings [CHAR LIMIT=60] -->
     <string name="keycombo_menu_other_open_manage_keyboard_shortcuts">Manage keyboard shortcuts</string>
     <!-- Keyboard key combination assignment for opening TalkBack settings [CHAR LIMIT=60] -->
-    <string name="keycombo_menu_other_open_talkback_settings">Open TalkBack settings</string>
+    <string name="keycombo_menu_other_open_talkback_settings">Open TalkBack For Devs settings</string>
     <!-- Web navigation actions group name title [CHAR LIMIT=40] -->
     <string name="keycombo_menu_category_web">Web navigation actions</string>
     <!-- Keyboard key combination assignment for navigating to next button [CHAR LIMIT=40] -->
@@ -991,7 +992,7 @@
     <!-- Label for the context menu containing voice commands. [CHAR_LIMIT=70] -->
     <string name="title_show_voice_commands">Voice commands</string>
     <!-- Label for the context menu containing Talkback settings. [CHAR_LIMIT=70] -->
-    <string name="talkback_show_talkback_settings">TalkBack settings</string>
+    <string name="talkback_show_talkback_settings">TalkBack For Developers settings</string>
 
     <!-- Label for the navigation menu containing other web navigation. [CHAR_LIMIT=100] -->
     <string name="title_other_web_navigation">Other web navigation</string>
@@ -1038,7 +1039,7 @@
     <!-- Summary for the context menu containing show or hide screen. [CHAR_LIMIT=NONE] -->
     <string name="summary_show_hide_screen">Hide the display so your screen is not visible to others in public places. After hiding your screen, return it to a normal state.</string>
     <!-- Summary for the activity that manages TalkBack settings. [CHAR_LIMIT=NONE] -->
-    <string name="summary_talkback_preferences">Open TalkBack settings</string>
+    <string name="summary_talkback_preferences">Open TalkBack For Developers settings</string>
     <!-- Summary for the menu item that opens the dialog with system actions available on device from R. [CHAR_LIMIT=NONE] -->
     <string name="summary_system_actions">Go to all apps and Quick Settings</string>
     <!-- Summary for user to adjust Text to Speech settings. [CHAR_LIMIT=NONE] -->
@@ -1549,7 +1550,7 @@
       Arc: Hint to open TalkBack settings by using keyboard shortcut. This is spoken when focus has
       moved into Android window. [CHAR LIMIT=NONE]
     -->
-    <string name="arc_open_talkback_settings_hint">Press <xliff:g id="keyCombo" example="Search+0">%1$s</xliff:g> to open TalkBack settings</string>
+    <string name="arc_open_talkback_settings_hint">Press <xliff:g id="keyCombo" example="Search+0">%1$s</xliff:g> to open TalkBack For Developers settings</string>
 
   <!-- Value used to reset the user language preference to default [CHAR LIMIT=40] -->
   <string name="reset_user_language_preference">Default</string>
@@ -1867,7 +1868,7 @@
   <!-- The text to introduce the describe icons module. [CHAR_LIMIT=NONE]-->
   <string name="describe_icons_text">TalkBack can recognize and describe icons on the screen. This can help identify unlabelled buttons in apps and more.\n\nYou can turn this on in TalkBack settings.</string>
   <!-- The text of the TalkBack settings link. [CHAR_LIMIT=NONE]-->
-  <string name="describe_icons_link_text">Go to TalkBack settings</string>
+  <string name="describe_icons_link_text">Go to TalkBack For Developers settings</string>
 
   <!-- For tutorial. -->
   <!-- An item in settings page to explain how to use TalkBack. [CHAR_LIMIT=25]-->
