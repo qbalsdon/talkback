@@ -15,19 +15,27 @@ import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import java.lang.ref.WeakReference;
 
 /**
+ * A [BroadcastReceiver] that interprets command line instructions and forwards them to
+ * Google TalkBack.
+ *
+ * GENERAL USAGE:
  * adb shell am broadcast -a com.a11y.adb.[A11yAction] [-e mode [SelectorController.Granularity]]
- * adb shell am broadcast -a com.a11y.adb.[ToggleDeveloperSetting.DeveloperSetting]
- * adb shell am broadcast -a com.a11y.adb.[VolumeControl]
- * adb -s $PIXEL5 shell am broadcast -a com.a11y.adb.volume_max
- * adb -s $PIXEL5 shell am broadcast -a com.a11y.adb.volume_min
+ * adb shell am broadcast -a com.a11y.adb.[DeveloperSetting]
+ * adb shell am broadcast -a com.a11y.adb.[VolumeSetting]
  *
  * EXAMPLES
+ * -- A11yAction --
  * adb shell am broadcast -a com.a11y.adb.next
  * adb shell am broadcast -a com.a11y.adb.next -e mode headings
  * adb shell am broadcast -a com.a11y.adb.perform_click_action
+ *
+ * -- DeveloperSetting --
  * adb shell am broadcast -a com.a11y.adb.toggle_speech_output
+ *
+ * -- VolumeSetting --
+ * adb shell am broadcast -a com.a11y.adb.volume_max
+ * adb shell am broadcast -a com.a11y.adb.volume_min
  */
-
 public class AdbReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -137,9 +145,6 @@ public class AdbReceiver extends BroadcastReceiver {
         }
     }
 
-    private static String IntentActionPrefix = "com.a11y.adb";
-    private static WeakReference<AdbReceiver> instance = null;
-
     public static void registerAdbReceiver(Context context) {
         Log.tb4d("Receiver registered");
         instance = new WeakReference(new AdbReceiver());
@@ -171,4 +176,7 @@ public class AdbReceiver extends BroadcastReceiver {
         }
         return intentFilter;
     }
+
+    private static String IntentActionPrefix = "com.a11y.adb";
+    private static WeakReference<AdbReceiver> instance = null;
 }

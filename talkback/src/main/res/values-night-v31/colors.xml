@@ -16,6 +16,7 @@
 -->
 
 <resources>
+    <!-- INFO: TalkBack For Developers modification -->
     <color name="tutorial_footer_background">#313235</color>
     <color name="tutorial_footer_buttons">#f8f9fa</color>
     <color name="tutorial_footer_chevron_color">@android:color/white</color>

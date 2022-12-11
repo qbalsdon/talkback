@@ -78,12 +78,4 @@ enum A11yAction {
         }
         return SelectorController.Granularity.DEFAULT;
     }
-
-//    companion object {
-//
-//        fun fromString(string: String): A11yAction =
-//                values().firstOrNull { it.name.lowercase() == string.lowercase() } ?: UNASSIGNED
-//
-
-//    }
 }
