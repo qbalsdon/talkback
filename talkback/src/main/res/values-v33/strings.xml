@@ -2,7 +2,7 @@
 <resources>
 
   <!-- Talkback service detail intro for Android T and above. [CHAR_LIMIT=NONE] -->
-  <string name="talkback_service_intro">TalkBack provides spoken feedback so that you can use your device without looking at the screen. TalkBack can be helpful for people who have difficulty seeing the screen.</string>
+  <string name="talkback_service_intro">Welcome to TalkBack for Developers!\n\nTalkBack For Developers is a custom fork of Google\'s TalkBack. It allows developers to interace with TalkBack using adb command line controls rather than gestures. It is feature complete to TalkBack, and you should be able to use it as you would TalkBack.\n\n\n\nTalkBack provides spoken feedback so that you can use your device without looking at the screen. TalkBack can be helpful for people who have difficulty seeing the screen.</string>
 
   <!--
       Source: A html description of TalkBack for Android T and above.

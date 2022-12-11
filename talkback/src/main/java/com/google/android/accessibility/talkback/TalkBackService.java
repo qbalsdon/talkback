@@ -86,6 +86,7 @@ import com.google.android.accessibility.talkback.actor.search.UniversalSearchAct
 import com.google.android.accessibility.talkback.actor.search.UniversalSearchManager;
 import com.google.android.accessibility.talkback.actor.voicecommands.SpeechRecognizerActor;
 import com.google.android.accessibility.talkback.actor.voicecommands.VoiceCommandProcessor;
+import com.google.android.accessibility.talkback.adb.AdbReceiver;
 import com.google.android.accessibility.talkback.brailledisplay.BrailleDisplayHelper;
 import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.compositor.EventFilter;
@@ -445,7 +446,9 @@ public class TalkBackService extends AccessibilityService
    *
    * @return TTS volume in [0.0f, 1.0f].
    */
+  // INFO: TalkBack For Developers - changes have no effect (Samsung S21)
   private float calculateFinalAnnouncementVolume() {
+
     if (!FeatureSupport.hasAccessibilityAudioStream(this)) {
       return 1.0f;
     }
@@ -517,8 +520,10 @@ public class TalkBackService extends AccessibilityService
     return false;
   }
 
+  // INFO: TalkBack For Developers modification
   @Override
   public void onDestroy() {
+    AdbReceiver.unregisterAdbReceiver(this);
     if (shouldUseTalkbackGestureDetection()) {
       unregisterGestureDetection();
     }
@@ -881,9 +886,12 @@ public class TalkBackService extends AccessibilityService
     }
   }
 
+  // INFO: TalkBack For Developers modification
   @Override
   protected void onServiceConnected() {
     LogUtils.v(TAG, "System bound to service.");
+
+    AdbReceiver.registerAdbReceiver(this);
 
     primesController = new PrimesController();
     primesController.initialize(getApplication());
@@ -1408,6 +1416,19 @@ public class TalkBackService extends AccessibilityService
     BrailleIme.initialize(
         this, talkBackForBrailleIme, brailleDisplay.getBrailleDisplayForBrailleIme());
     analytics.onTalkBackServiceStarted();
+  }
+
+  // INFO: TalkBack For Developers modification
+  public void performGesture(String gestureString) {
+    Performance perf = Performance.getInstance();
+    EventId eventId = perf.onEventReceived(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_UNKNOWN));
+    gestureController.performAction(gestureString, eventId);
+  }
+
+  public void moveAtGranularity(SelectorController.Granularity granularity, boolean isNext) {
+    Performance perf = Performance.getInstance();
+    EventId eventId = perf.onEventReceived(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_UNKNOWN));
+    selectorController.moveAtGranularity(eventId, granularity, isNext);
   }
 
   private final TalkBackForBrailleDisplay talkBackForBrailleDisplay =

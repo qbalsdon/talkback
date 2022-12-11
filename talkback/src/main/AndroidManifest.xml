@@ -82,9 +82,11 @@
         </receiver>
 
         <!-- TalkBack -->
+        <!-- INFO: TalkBack For Developers modification-->
         <service
-            android:icon="@drawable/icon"
-            android:name="com.google.android.marvin.talkback.TalkBackService"
+            android:icon="@drawable/icon_tb4d"
+            android:roundIcon="@drawable/icon_tb4d_round"
+            android:name="com.developer.talkback.TalkBackDevService"
             android:exported="true"
             android:label="@string/talkback_title"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
@@ -103,21 +105,24 @@
                 android:resource="@xml/accessibilityservice" />
         </service>
 
+        <!-- INFO: TalkBack For Developers modification-->
         <service
-            android:icon="@drawable/icon"
+            android:icon="@drawable/icon_tb4d"
+            android:roundIcon="@drawable/icon_tb4d_round"
             android:name="com.google.android.accessibility.talkback.ipc.IpcService"
             android:enabled="true"
             android:exported="false"
             android:label="TalkBackIpcService" />
 
         <!-- TalkBack Preferences -->
+        <!-- INFO: TalkBack For Developers modification-->
         <activity
             android:name="com.android.talkback.TalkBackPreferencesActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:label="@string/talkback_preferences_title"
             android:launchMode="singleTop"
-            android:taskAffinity="com.google.android.accessibility.talkback.SettingsAffinity"
+            android:taskAffinity="com.google.android.accessibility.talkback4d.SettingsAffinity"
             android:theme="@style/TalkBackSettings"
             tools:ignore="ExportedActivity" >
             <intent-filter>
@@ -159,13 +164,14 @@
         </activity>
 
         <!-- Custom Label Manager - Summary Activity -->
+        <!-- INFO: TalkBack For Developers modification-->
         <activity
             android:name="com.google.android.accessibility.talkback.labeling.LabelManagerSummaryActivity"
             android:exported="false"
             android:label="@string/label_manager_summary_title"
             android:launchMode="singleTop"
             android:theme="@style/TalkBackSettings"
-            android:taskAffinity="com.google.android.accessibility.talkback.SettingsAffinity" >
+            android:taskAffinity="com.google.android.accessibility.talkback4d.SettingsAffinity" >
             <!-- This preference activity can receive an implicit intent action -->
             <intent-filter>
                 <action android:name=".labeling.TalkBackSelectorPreferencesActivity" />
@@ -174,13 +180,14 @@
         </activity>
 
         <!-- Custom Label Manager - Package Activity -->
+        <!-- INFO: TalkBack For Developers modification-->
         <activity
             android:name="com.google.android.accessibility.talkback.labeling.LabelManagerPackageActivity"
             android:exported="false"
             android:label="@string/manage_label"
             android:launchMode="singleTop"
             android:theme="@style/TalkBackSettings"
-            android:taskAffinity="com.google.android.accessibility.talkback.SettingsAffinity" />
+            android:taskAffinity="com.google.android.accessibility.talkback4d.SettingsAffinity" />
 
         <!-- Gesture Change Notification Activity -->
         <activity

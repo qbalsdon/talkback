@@ -1,7 +1,7 @@
 // For building the open-source release of TalkBack.
 
 ext {
-    talkbackApplicationId = "com.android.talkback"
+    talkbackApplicationId = "com.android.talkback4d"
 }
 
 android {
@@ -62,6 +62,6 @@ dependencies {
 
 android {
     defaultConfig {
-        buildConfigField("String", "APPLICATION_ID", '"com.balsdon.talkback4devs"')
+        buildConfigField("String", "APPLICATION_ID", '"com.developer.talkback"')
     }
 }
