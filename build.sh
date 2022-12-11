@@ -99,12 +99,7 @@ if [[ $ACCEPT_SDK_LICENSES_EXIT_CODE -ne 0 ]]; then
 fi
 
 
-if [[ "$PIPELINE" = true ]]; then
-  # Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
-  # sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-  # export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
-  echo " --> Pipeline!"
-else
+if [[ "$PIPELINE" = false ]]; then
   unset JAVA_HOME;
   export JAVA_HOME=$(/usr/libexec/java_home -v"11");
 fi
