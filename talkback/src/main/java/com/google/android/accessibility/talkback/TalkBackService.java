@@ -2793,14 +2793,14 @@ public class TalkBackService extends AccessibilityService
      *
      * @return if the [TouchInteractionController] registration breaks TalkBack
      */
-    private boolean hasMoreThanOneDisplay() {
+    private boolean hasOneDisplay() {
         List<Display> displays = WindowUtils.getAllDisplays(getApplicationContext());
-        return displays.size() > 1;
+        return displays.size() == 1;
     }
     // ------------------------------------------
 
     private void registerGestureDetection() {
-        if (hasMoreThanOneDisplay()) return;
+        if (hasOneDisplay()) return;
         if (BuildVersionUtils.isAtLeastT()) {
             List<Display> displays = WindowUtils.getAllDisplays(getApplicationContext());
             Executor gestureExecutor = Executors.newSingleThreadExecutor();
@@ -2825,7 +2825,7 @@ public class TalkBackService extends AccessibilityService
     }
 
     private void unregisterGestureDetection() {
-        if (!hasMoreThanOneDisplay()) return;
+        if (!hasOneDisplay()) return;
         if (BuildVersionUtils.isAtLeastT()) {
             List<Display> displays = WindowUtils.getAllDisplays(getApplicationContext());
             for (Display display : displays) {
