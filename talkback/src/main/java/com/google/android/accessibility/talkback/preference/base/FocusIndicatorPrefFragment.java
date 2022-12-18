@@ -40,10 +40,12 @@ public class FocusIndicatorPrefFragment extends TalkbackBaseFragment {
   private PreferenceCategory colorPrefCategory;
   private SharedPreferences prefs;
 
+  // INFO: TalkBack For Developers modification
   @Override
   public CharSequence getTitle() {
     return getString(R.string.title_pref_category_manage_focus_indicator);
   }
+  // ------------------------------------------
 
   /** Preference items for focus indicator colors. */
   @VisibleForTesting
