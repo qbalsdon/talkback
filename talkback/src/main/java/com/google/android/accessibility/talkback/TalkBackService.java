@@ -2825,7 +2825,7 @@ public class TalkBackService extends AccessibilityService
     }
 
     private void unregisterGestureDetection() {
-        if (!hasOneDisplay()) return;
+        if (hasOneDisplay()) return;
         if (BuildVersionUtils.isAtLeastT()) {
             List<Display> displays = WindowUtils.getAllDisplays(getApplicationContext());
             for (Display display : displays) {
