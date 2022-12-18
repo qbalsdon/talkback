@@ -293,7 +293,6 @@ public class InputFocusInterpreter
     boolean isFromFocusAction =
         ((timeDiff >= 0L) && (timeDiff < INPUT_FOCUS_ACTION_TIMEOUT))
             && node.equals(actorState.getInputFocusActionRecord().inputFocusedNode);
-
     return isFromFocusAction;
   }
 
