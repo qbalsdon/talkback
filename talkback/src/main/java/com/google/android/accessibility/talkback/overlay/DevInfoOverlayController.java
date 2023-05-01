@@ -7,8 +7,6 @@ import com.google.android.accessibility.talkback.Feedback;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-// TODO: (b/191913512) - add tests for this implementation
-
 /** Implementation for log overlay tool */
 public class DevInfoOverlayController {
 

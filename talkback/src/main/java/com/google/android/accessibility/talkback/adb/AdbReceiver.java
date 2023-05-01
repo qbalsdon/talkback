@@ -10,7 +10,6 @@ import android.content.res.Resources;
 import android.media.AudioManager;
 
 import com.google.android.accessibility.talkback.TalkBackService;
-import com.google.android.accessibility.talkback.utils.DiagnosticOverlayControllerImpl;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
 
 import java.lang.ref.WeakReference;

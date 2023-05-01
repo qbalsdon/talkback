@@ -47,7 +47,6 @@ import java.util.HashSet;
 
 /** Highlights for clickability of nodes and for nodes that were traversed but not focused */
 public class HighlightOverlay extends SimpleOverlay {
-  private static final boolean BLOCK_OUT = false;
   private static final float HIGHLIGHT_ALPHA = 0.25f;
   static View highlightView;
 
@@ -114,11 +113,6 @@ public class HighlightOverlay extends SimpleOverlay {
           drawRectangle(canvas, nodeBounds, refocusPaint);
         }
       }
-      if (BLOCK_OUT && focusedNode != null) {
-        Rect nodeBounds = new Rect();
-        focusedNode.getBoundsInScreen(nodeBounds);
-        blockOutExceptFocus(canvas, nodeBounds);
-      }
     }
 
     private void processUnfocusableNodes(@DiagnosticType Integer type, Canvas canvas) {
@@ -143,16 +137,6 @@ public class HighlightOverlay extends SimpleOverlay {
       // Draw fill and outline.
       canvas.drawRect(rectInHighlightView, paint);
       canvas.drawRect(rectInHighlightView, borderPaint);
-    }
-
-    private void blockOutExceptFocus(Canvas canvas, Rect rectOnScreen) {
-      // Adjust location by overlay position on screen.
-      int[] overlayScreenXY = {0, 0};
-      highlightView.getLocationOnScreen(overlayScreenXY);
-      Rect rectInHighlightView = moveRect(rectOnScreen, -overlayScreenXY[0], -overlayScreenXY[1]);
-
-      highlightView.setBackgroundColor(blackPaint.getColor());
-      canvas.drawRect(rectInHighlightView, cutPaint);
     }
   }
 
@@ -180,9 +164,7 @@ public class HighlightOverlay extends SimpleOverlay {
     FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(layPar.width, layPar.height);
     highlightView.setLayoutParams(params);
     highlightView.setVisibility(View.INVISIBLE);
-    if (!BLOCK_OUT) {
-      highlightView.setAlpha(HIGHLIGHT_ALPHA);
-    }
+    highlightView.setAlpha(HIGHLIGHT_ALPHA);
     layout.addView(highlightView);
     setContentView(layout);
     setParams(layPar);
@@ -207,10 +189,8 @@ public class HighlightOverlay extends SimpleOverlay {
   }
 
   public void clearHighlight() {
-    if (!BLOCK_OUT) {
-      highlightView.setVisibility(View.INVISIBLE);
-      hide();
-    }
+    highlightView.setVisibility(View.INVISIBLE);
+    hide();
   }
   public void removeHighlight() {
     highlightView.setVisibility(View.INVISIBLE);

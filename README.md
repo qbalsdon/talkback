@@ -71,7 +71,7 @@ BROADCAST -a com.a11y.adb.block_out # toggle blocking out everything except the 
     - Touch target size check
     - Developer-friendly details on curtain (add to announcements)
     - [NAF control checker][4]
-    - Hide all screen except highlighted node
+    - [x] Hide all screen except highlighted node
     - Show labels
 
 ## FIXED
