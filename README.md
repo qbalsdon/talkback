@@ -55,7 +55,6 @@ BROADCAST -a com.a11y.adb.debug_log_overlay # special case that toggles between 
 
 # Custom settings
 BROADCAST -a com.a11y.adb.block_out # toggle blocking out everything except the focused element
-adb -s $PIXEL7 shell am broadcast  -a com.a11y.adb.block_out # toggle blocking out everything except the focused element
 ```
 
 ## All parameters
