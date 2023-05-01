@@ -29,6 +29,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -46,6 +47,7 @@ import java.util.HashSet;
 
 /** Highlights for clickability of nodes and for nodes that were traversed but not focused */
 public class HighlightOverlay extends SimpleOverlay {
+  private static final boolean BLOCK_OUT = false;
   private static final float HIGHLIGHT_ALPHA = 0.25f;
   static View highlightView;
 
@@ -63,6 +65,8 @@ public class HighlightOverlay extends SimpleOverlay {
     private final Paint refocusPaint = new Paint();
     private final Paint skippedNodePaint = new Paint();
     private final Paint borderPaint = new Paint();
+    private final Paint blackPaint = new Paint();
+    private final Paint cutPaint = new Paint();
 
     public MultipleHighlightView(Context context) {
       super(context);
@@ -70,17 +74,28 @@ public class HighlightOverlay extends SimpleOverlay {
       /** Use {@link BlendMode#DST_OUT for clickable highlight if larger screen focusability
        * can be filtered out*/
       refocusPaint.setColor(Color.GREEN);
-      refocusPaint.setBlendMode(BlendMode.COLOR);
 
       skippedNodePaint.setStyle(Style.FILL);
-      skippedNodePaint.setBlendMode(BlendMode.OVERLAY);
       // Paint requires one to draw same rectangle twice for different colored borders - once
       // w/ fill and once w/ stroke
       borderPaint.setColor(Color.BLACK);
       borderPaint.setStyle(Style.STROKE);
-      borderPaint.setBlendMode(BlendMode.DARKEN);
       borderPaint.setStrokeWidth(
               context.getResources().getDimensionPixelSize(R.dimen.highlight_overlay_border));
+
+      blackPaint.setColor(Color.BLACK);
+      blackPaint.setStyle(Style.FILL_AND_STROKE);
+
+      cutPaint.setColor(Color.TRANSPARENT);
+      cutPaint.setStyle(Style.FILL);
+      cutPaint.setStrokeWidth(context.getResources().getDimensionPixelSize(R.dimen.highlight_overlay_border));
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        cutPaint.setBlendMode(BlendMode.DST_IN);
+        borderPaint.setBlendMode(BlendMode.DARKEN);
+        blackPaint.setBlendMode(BlendMode.SRC);
+        skippedNodePaint.setBlendMode(BlendMode.OVERLAY);
+        refocusPaint.setBlendMode(BlendMode.COLOR);
+      }
     }
 
     @Override
@@ -98,6 +113,11 @@ public class HighlightOverlay extends SimpleOverlay {
           node.getBoundsInScreen(nodeBounds);
           drawRectangle(canvas, nodeBounds, refocusPaint);
         }
+      }
+      if (BLOCK_OUT && focusedNode != null) {
+        Rect nodeBounds = new Rect();
+        focusedNode.getBoundsInScreen(nodeBounds);
+        blockOutExceptFocus(canvas, nodeBounds);
       }
     }
 
@@ -123,6 +143,16 @@ public class HighlightOverlay extends SimpleOverlay {
       // Draw fill and outline.
       canvas.drawRect(rectInHighlightView, paint);
       canvas.drawRect(rectInHighlightView, borderPaint);
+    }
+
+    private void blockOutExceptFocus(Canvas canvas, Rect rectOnScreen) {
+      // Adjust location by overlay position on screen.
+      int[] overlayScreenXY = {0, 0};
+      highlightView.getLocationOnScreen(overlayScreenXY);
+      Rect rectInHighlightView = moveRect(rectOnScreen, -overlayScreenXY[0], -overlayScreenXY[1]);
+
+      highlightView.setBackgroundColor(blackPaint.getColor());
+      canvas.drawRect(rectInHighlightView, cutPaint);
     }
   }
 
@@ -150,7 +180,9 @@ public class HighlightOverlay extends SimpleOverlay {
     FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(layPar.width, layPar.height);
     highlightView.setLayoutParams(params);
     highlightView.setVisibility(View.INVISIBLE);
-    highlightView.setAlpha(HIGHLIGHT_ALPHA);
+    if (!BLOCK_OUT) {
+      highlightView.setAlpha(HIGHLIGHT_ALPHA);
+    }
     layout.addView(highlightView);
     setContentView(layout);
     setParams(layPar);
@@ -175,6 +207,12 @@ public class HighlightOverlay extends SimpleOverlay {
   }
 
   public void clearHighlight() {
+    if (!BLOCK_OUT) {
+      highlightView.setVisibility(View.INVISIBLE);
+      hide();
+    }
+  }
+  public void removeHighlight() {
     highlightView.setVisibility(View.INVISIBLE);
     hide();
   }
