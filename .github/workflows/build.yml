@@ -37,6 +37,9 @@ jobs:
         ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
     - name: Sign Phone and Wear Artifacts
       run: |
+        echo "Available build tools"
+        ls ${ANDROID_SDK_ROOT}/build-tools/
+        echo "--------------------------------------"
         SIGNING_KEY=${{ secrets.SIGNING_KEY }}
         SIGNING_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
         BUILD_TOOLS=33.0.0
