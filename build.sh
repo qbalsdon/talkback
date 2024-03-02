@@ -37,21 +37,6 @@ function fail_with_message  {
   exit 1
 }
 
-function print_sdk_info {
-  log "\${ANDROID_SDK}: ${ANDROID_SDK}"
-  log "ls ${ANDROID_SDK}"; ls "${ANDROID_SDK}"
-  if [[ -d "${ANDROID_SDK}/platforms" ]]; then
-    log "\${ANDROID_SDK}/platforms: ${ANDROID_SDK}/platforms"
-    log "ls ${ANDROID_SDK}/platforms"; ls "${ANDROID_SDK}/platforms"
-  fi
-  if [[ -d "${ANDROID_SDK}/build-tools" ]]; then
-    log "\${ANDROID_SDK}/build-tools: ${ANDROID_SDK}/build-tools"
-    log "ls ${ANDROID_SDK}/build-tools"; ls "${ANDROID_SDK}/build-tools"
-  fi
-  log "\${ANDROID_NDK}: ${ANDROID_NDK}"
-  log "ls \${ANDROID_NDK}:"; ls "${ANDROID_NDK}"
-}
-
 function require_environment_variable() {
   if [[ -z ${!1+set} ]]; then
     fail_with_message "the environment variable $1 is not set"
@@ -75,11 +60,15 @@ log "ls"; ls
 log
 
 #-----------------------------------------------------------------------------
+TEMP_DIR=~/tmp
 if [[ "$PIPELINE" = false ]]; then
   log "!! CURRENT JAVA_HOME: [$JAVA_HOME] !!"
   unset JAVA_HOME;
   export JAVA_HOME=$(/usr/libexec/java_home -v"11.0.21");
   log "!!     NEW JAVA_HOME: [$JAVA_HOME] !!"
+else
+  TEMP_DIR=$(mktemp -d)
+  mkdir $TEMP_DIR/opt
 fi
 #-----------------------------------------------------------------------------
 
@@ -104,18 +93,6 @@ log "java -version:"; java -version
 log "javac -version:"; javac -version
 log
 
-# Having compileSdkVersion=31 leads to javac error "unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)"; switching to Java 11 fixes this problem.
-# sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-# export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
-log "\${JAVA_HOME}: ${JAVA_HOME}"
-log "ls \${JAVA_HOME}:"; ls "${JAVA_HOME}"
-log "java -version:"; java -version
-log "javac -version:"; javac -version
-log
-
-
-TEMP_DIR=$(mktemp -d)
-mkdir $TEMP_DIR/opt
 GRADLE_ZIP_REMOTE_FILE=gradle-${GRADLE_DOWNLOAD_VERSION}-bin.zip
 GRADLE_ZIP_DEST_PATH=${TEMP_DIR}/${GRADLE_DOWNLOAD_VERSION}.zip
 GRADLE_UNZIP_HOSTING_FOLDER=${TEMP_DIR}/opt/gradle-${GRADLE_DOWNLOAD_VERSION}
@@ -165,15 +142,12 @@ if [[ "$GRADLE_TRACE" = true ]]; then
   GRADLEW_DEBUG=--debug
   GRADLEW_STACKTRACE=--stacktrace
 fi
-log "./${GRADLE_BINARY} assembleDebug"
-${GRADLE_BINARY} ${GRADLEW_DEBUG} ${GRADLEW_STACKTRACE} assembleDebug
+log "./${GRADLE_BINARY} assemble"
+${GRADLE_BINARY} ${GRADLEW_DEBUG} ${GRADLEW_STACKTRACE} assemble
 BUILD_EXIT_CODE=$?
 log
 
 if [[ $BUILD_EXIT_CODE -eq 0 ]]; then
-  print_sdk_info
-  log
-
   log "find . -name *.apk"
   find . -name "*.apk"
   log
