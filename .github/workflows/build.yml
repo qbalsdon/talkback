@@ -32,11 +32,6 @@ jobs:
         echo "BUILD START"
         ./build.sh -p
         echo "BUILD COMPLETE"
-        echo "-----------------------------------------------------"
-        echo "RENAME OUTPUTS"
-        mv ./build/outputs/apk/phone/release/***-phone-release-unsigned.apk ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
-        mv ./build/outputs/apk/wear/release/***-wear-release-unsigned.apk ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
-        echo "-----------------------------------------------------"
         echo "ARTIFACT INFORMATION"
         ls -ln ./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
         ls -ln ./build/outputs/apk/wear/release/talkback-wear-release-unsigned.apk
