@@ -13,8 +13,17 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
+
+     Thanks Google:
+
+     FATAL EXCEPTION: main
+     Process: com.android.talkback4d, PID: 15237
+     android.view.InflateException: Binary XML file line #22 in
+     com.android.talkback4d:layout/list_item_simple_framelayout:
+     Binary XML file line #22 in com.android.talkback4d:layout/list_item_simple_framelayout:
+     Error inflating class com.google.android.clockwork.common.wearable.wearmaterial.card.WearCard
 -->
-<com.google.android.clockwork.common.wearable.wearmaterial.card.WearCard
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,4 +38,4 @@
       android:layout_gravity="center_vertical"
       android:textColor="@color/a11y_wear_material_color_on_surface"
       android:paddingHorizontal="@dimen/wear_alertdialog_menuitem_padding_start"/>
-</com.google.android.clockwork.common.wearable.wearmaterial.card.WearCard>
+</androidx.cardview.widget.CardView>
