@@ -14,7 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.google.android.clockwork.common.wearable.wearmaterial.card.WearCard
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,4 +29,4 @@
       android:layout_gravity="center_vertical"
       android:textColor="@color/a11y_wear_material_color_on_surface"
       android:paddingHorizontal="@dimen/wear_alertdialog_menuitem_padding_start"/>
-</com.google.android.clockwork.common.wearable.wearmaterial.card.WearCard>
+</androidx.cardview.widget.CardView>
