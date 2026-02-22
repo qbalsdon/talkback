@@ -28,12 +28,23 @@ jobs:
         java-version: '11'
       # Use Java 11 for Gradle so compiled bytecode is version 55; D8 in this AGP doesn't support Java 17 bytecode (61).
 
+    - name: Install NDK and set ANDROID_NDK
+      run: |
+        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653"
+        # Side-by-side NDK installs under ndk/<version>; use the one we just installed
+        NDK_DIR=$(ls -d ${ANDROID_SDK_ROOT}/ndk/*/ 2>/dev/null | head -1)
+        NDK_DIR=${NDK_DIR%/}
+        echo "ANDROID_NDK=${NDK_DIR}" >> $GITHUB_ENV
+        echo "NDK at: ${NDK_DIR}"
+        ls -la "${NDK_DIR}/sources/cxx-stl/llvm-libc++/libs" 2>/dev/null || true
+
     - name: Run Build Script
       run: |
         echo "Staring build"
         echo "Android sdk location: [${ANDROID_SDK_ROOT}]"
         export ANDROID_SDK=${ANDROID_SDK_ROOT}
         echo "SDK Check: ANDROID_SDK=${ANDROID_SDK}"
+        echo "ANDROID_NDK=${ANDROID_NDK}"
         echo "-----------------------------------------------------"
         echo "JAVA HOME: [${JAVA_HOME}]"
         echo "-----------------------------------------------------"
