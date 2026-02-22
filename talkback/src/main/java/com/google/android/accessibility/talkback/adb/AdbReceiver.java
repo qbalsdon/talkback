@@ -11,6 +11,7 @@ import android.media.AudioManager;
 
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
+import com.google.android.accessibility.utils.output.TextToSpeechOverlay;
 
 import java.lang.ref.WeakReference;
 
@@ -35,6 +36,9 @@ import java.lang.ref.WeakReference;
  * -- VolumeSetting --
  * adb shell am broadcast -a com.a11y.adb.volume_max
  * adb shell am broadcast -a com.a11y.adb.volume_min
+ *
+ * -- Slider (focused seek control) --
+ * adb shell am broadcast -a com.a11y.adb.slider -e mode [increase | decrease | min | max | mid]
  */
 public class AdbReceiver extends BroadcastReceiver {
     @Override
@@ -49,6 +53,7 @@ public class AdbReceiver extends BroadcastReceiver {
         if (setDeveloperSetting(context, action, intent, talkBackServiceInstance)) return;
         if (toggleDeveloperSetting(context, action, intent, talkBackServiceInstance)) return;
         if (setAccessibilityVolume(context, action, intent, talkBackServiceInstance)) return;
+        if (performSliderAction(context, action, intent, talkBackServiceInstance)) return;
 
         Log.tb4d(String.format("INVALID ACTION: %s", action));
     }
@@ -167,6 +172,34 @@ public class AdbReceiver extends BroadcastReceiver {
         }
     }
 
+    private static final String SLIDER_ACTION = "slider";
+    private static final String SLIDER_MODE_EXTRA = "mode";
+
+    private boolean performSliderAction(Context context,
+                                         String action,
+                                         Intent intent,
+                                         TalkBackService talkBackServiceInstance) {
+        if (!SLIDER_ACTION.equals(action)) {
+            return false;
+        }
+        if (!intent.hasExtra(SLIDER_MODE_EXTRA)) {
+            Log.tb4d("slider broadcast missing -e mode [increase|decrease|min|max|mid]");
+            return false;
+        }
+        String mode = intent.getStringExtra(SLIDER_MODE_EXTRA);
+        boolean success = talkBackServiceInstance.performSliderAction(mode);
+        if (!success) {
+            Log.tb4d(String.format("slider action failed: mode=%s (focus a slider first)", mode));
+            // Use overlay (not TTS) so the message is always visible even if TTS is unavailable or fails.
+            try {
+                new TextToSpeechOverlay(context.getApplicationContext()).displayText("No slider selected");
+            } catch (Exception e) {
+                Log.tb4d("TextToSpeechOverlay failed: " + e.getMessage());
+            }
+        }
+        return success;
+    }
+
     public static void registerAdbReceiver(Context context) {
         Log.tb4d("Receiver registered");
         instance = new WeakReference(new AdbReceiver());
@@ -196,6 +229,7 @@ public class AdbReceiver extends BroadcastReceiver {
                 intentFilter.addAction(String.format("%s.%s", IntentActionPrefix, setting.name().toLowerCase()));
             }
         }
+        intentFilter.addAction(String.format("%s.%s", IntentActionPrefix, SLIDER_ACTION));
         return intentFilter;
     }
 

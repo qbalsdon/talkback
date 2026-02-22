@@ -75,6 +75,7 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
@@ -187,7 +188,9 @@ import com.google.android.accessibility.talkback.utils.SplitCompatUtils;
 import com.google.android.accessibility.talkback.utils.VerbosityPreferences;
 import com.google.android.accessibility.utils.AccessibilityEventListener;
 import com.google.android.accessibility.utils.AccessibilityEventUtils;
+import com.google.android.accessibility.talkback.Feedback.AdjustValue;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
+import com.google.android.accessibility.utils.Role;
 import com.google.android.accessibility.utils.BuildConfig;
 import com.google.android.accessibility.utils.BuildVersionUtils;
 import com.google.android.accessibility.utils.FeatureSupport;
@@ -275,6 +278,63 @@ public class TalkBackService extends AccessibilityService
         Performance perf = Performance.getInstance();
         EventId eventId = perf.onEventReceived(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_UNKNOWN));
         selectorController.moveAtGranularity(eventId, granularity, isNext);
+    }
+
+    /**
+     * Performs a slider action on the currently focused seek control (slider). Modes: increase,
+     * decrease, min, max, mid.
+     *
+     * @param mode one of "increase", "decrease", "min", "max", "mid"
+     * @return true if the action was performed
+     */
+    public boolean performSliderAction(String mode) {
+        if (pipeline == null || accessibilityFocusMonitor == null) {
+            return false;
+        }
+        String m = (mode != null) ? mode.toLowerCase().trim() : "";
+        EventId eventId = Performance.getInstance().onEventReceived(
+                new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_UNKNOWN));
+
+        switch (m) {
+            case "increase":
+                pipeline.getFeedbackReturner().returnFeedback(eventId, Feedback.adjustValue(AdjustValue.Action.INCREASE_VALUE));
+                return true;
+            case "decrease":
+                pipeline.getFeedbackReturner().returnFeedback(eventId, Feedback.adjustValue(AdjustValue.Action.DECREASE_VALUE));
+                return true;
+            case "min":
+            case "max":
+            case "mid":
+                androidx.core.view.accessibility.AccessibilityNodeInfoCompat node =
+                        accessibilityFocusMonitor.getSupportedAdjustableNode();
+                if (node == null || Role.getRole(node) != Role.ROLE_SEEK_CONTROL) {
+                    return false;
+                }
+                if (!AccessibilityNodeInfoUtils.supportsAction(node, AccessibilityAction.ACTION_SET_PROGRESS.getId())) {
+                    return false;
+                }
+                androidx.core.view.accessibility.AccessibilityNodeInfoCompat.RangeInfoCompat rangeInfo =
+                        node.getRangeInfo();
+                float progress;
+                if (rangeInfo != null) {
+                    float minVal = rangeInfo.getMin();
+                    float maxVal = rangeInfo.getMax();
+                    progress =
+                            "min".equals(m)
+                                    ? minVal
+                                    : "max".equals(m) ? maxVal : (minVal + maxVal) / 2f;
+                } else {
+                    progress = "min".equals(m) ? 0f : "max".equals(m) ? 1f : 0.5f;
+                }
+                Bundle args = new Bundle();
+                args.putFloat(AccessibilityNodeInfo.ACTION_ARGUMENT_PROGRESS_VALUE, progress);
+                pipeline.getFeedbackReturner().returnFeedback(
+                        eventId,
+                        Feedback.nodeAction(node, AccessibilityAction.ACTION_SET_PROGRESS.getId(), args));
+                return true;
+            default:
+                return false;
+        }
     }
     // ----------------- TB4D -------------------
 
