@@ -21,13 +21,6 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
-    - name: Set up JDK 11 for build
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '11'
-      # Use Java 11 for Gradle so compiled bytecode is version 55; D8 in this AGP doesn't support Java 17 bytecode (61).
-
     - name: Install NDK and set ANDROID_NDK
       run: |
         echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653"
@@ -37,6 +30,14 @@ jobs:
         echo "ANDROID_NDK=${NDK_DIR}" >> $GITHUB_ENV
         echo "NDK at: ${NDK_DIR}"
         ls -la "${NDK_DIR}/sources/cxx-stl/llvm-libc++/libs" 2>/dev/null || true
+      # Run with Java 17 (current); sdkmanager requires Java 17 (class file 61).
+
+    - name: Set up JDK 11 for build
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+      # Use Java 11 for Gradle so compiled bytecode is version 55; D8 in this AGP doesn't support Java 17 bytecode (61).
 
     - name: Run Build Script
       run: |
