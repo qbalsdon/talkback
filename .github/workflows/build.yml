@@ -50,7 +50,7 @@ jobs:
         echo "--------------------------------------"
         SIGNING_KEY=${{ secrets.SIGNING_KEY }}
         SIGNING_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
-        BUILD_TOOLS=33.0.0
+        BUILD_TOOLS=34.0.0
         BUILD_TOOLS_PATH=${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS}
         ALIAS=${{ secrets.ALIAS }}
         INPUT_FILE_PHONE=./build/outputs/apk/phone/release/talkback-phone-release-unsigned.apk
