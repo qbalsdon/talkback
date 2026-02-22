@@ -21,6 +21,17 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
+    - name: Install NDK and set ANDROID_NDK
+      run: |
+        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653"
+        # Side-by-side NDK installs under ndk/<version>; use the one we just installed
+        NDK_DIR=$(ls -d ${ANDROID_SDK_ROOT}/ndk/*/ 2>/dev/null | head -1)
+        NDK_DIR=${NDK_DIR%/}
+        echo "ANDROID_NDK=${NDK_DIR}" >> $GITHUB_ENV
+        echo "NDK at: ${NDK_DIR}"
+        ls -la "${NDK_DIR}/sources/cxx-stl/llvm-libc++/libs" 2>/dev/null || true
+      # Run with Java 17 (current); sdkmanager requires Java 17 (class file 61).
+
     - name: Set up JDK 11 for build
       uses: actions/setup-java@v4
       with:
@@ -34,6 +45,7 @@ jobs:
         echo "Android sdk location: [${ANDROID_SDK_ROOT}]"
         export ANDROID_SDK=${ANDROID_SDK_ROOT}
         echo "SDK Check: ANDROID_SDK=${ANDROID_SDK}"
+        echo "ANDROID_NDK=${ANDROID_NDK}"
         echo "-----------------------------------------------------"
         echo "JAVA HOME: [${JAVA_HOME}]"
         echo "-----------------------------------------------------"

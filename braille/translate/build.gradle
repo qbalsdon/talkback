@@ -1,10 +1,97 @@
 apply plugin: 'com.android.library'
 apply from: "../../shared.gradle"
 
+// Resolve NDK dir (works in CI and local; ndkDirectory may be null at config time).
+def resolveNdkDir = {
+    def ndkDir = android.ndkDirectory
+    if (ndkDir != null && ndkDir.exists()) return ndkDir
+    def localProp = project.rootProject.file('local.properties')
+    if (localProp.exists()) {
+        def props = new Properties()
+        localProp.withInputStream { props.load(it) }
+        def dir = props.getProperty('ndk.dir')
+        if (dir != null) {
+            def f = file(dir)
+            if (f.exists()) return f
+        }
+    }
+    return null
+}
+
+def cxxLibsDir = file("${buildDir}/cxx-stl-jniLibs")
+
+task copyLibcxxShared {
+    description = 'Pack libc++_shared.so so liblouiswrap.so can load it at runtime (CI and local).'
+    doLast {
+        def ndkDir = resolveNdkDir()
+        if (ndkDir == null) {
+            logger.warn("braille/translate: NDK dir not found; libc++_shared.so may be missing in APK.")
+            return
+        }
+        cxxLibsDir.mkdirs()
+        def srcDir = new File(ndkDir, "sources/cxx-stl/llvm-libc++/libs")
+        if (srcDir.exists()) {
+            fileTree(srcDir).matching { include '**/libc++_shared.so' }.each { so ->
+                def abi = so.parentFile.name
+                def dest = new File(cxxLibsDir, "${abi}/libc++_shared.so")
+                dest.parentFile.mkdirs()
+                so.withInputStream { dest.newOutputStream() << it }
+            }
+            return
+        }
+        // Fallback: NDK r26+ layout (toolchains/llvm/prebuilt/<host>/sysroot/usr/lib/<abi>)
+        def prebuilt = new File(ndkDir, "toolchains/llvm/prebuilt")
+        def hostDir = prebuilt.exists() ? prebuilt.listFiles()?.find { it.isDirectory() } : null
+        if (hostDir != null) {
+            def sysroot = new File(hostDir, "sysroot/usr/lib")
+            def abiToNdk = [
+                'arm64-v8a'   : 'aarch64-linux-android',
+                'armeabi-v7a' : 'armv7a-linux-androideabi',
+                'x86'         : 'i686-linux-android',
+                'x86_64'      : 'x86_64-linux-android'
+            ]
+            abiToNdk.each { abi, ndkName ->
+                def so = new File(sysroot, "${ndkName}/libc++_shared.so")
+                if (so.exists()) {
+                    def dest = new File(cxxLibsDir, "${abi}/libc++_shared.so")
+                    dest.parentFile.mkdirs()
+                    so.withInputStream { dest.newOutputStream() << it }
+                }
+            }
+        } else {
+            logger.warn("braille/translate: libc++_shared not found under ${ndkDir}; APK may crash on device.")
+        }
+    }
+    outputs.dir cxxLibsDir
+}
+
+tasks.whenTaskAdded { t ->
+    if (t.name.contains('merge') && (t.name.endsWith('NativeLibs') || t.name.endsWith('JniLibFolders'))) {
+        t.dependsOn copyLibcxxShared
+    }
+}
+
 android {
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+    }
     externalNativeBuild {
         ndkBuild {
             path file('src/phone/jni/Android.mk')
+        }
+    }
+    sourceSets {
+        main {
+            // liblouiswrap.so is linked with c++_shared; pack libc++_shared.so so it's in the AAR/APK.
+            def ndkDir = resolveNdkDir()
+            if (ndkDir != null) {
+                def cxxLibs = new File(ndkDir, "sources/cxx-stl/llvm-libc++/libs")
+                if (cxxLibs.exists()) {
+                    jniLibs.srcDirs += cxxLibs
+                } else {
+                    jniLibs.srcDirs += cxxLibsDir
+                }
+            }
         }
     }
 }
