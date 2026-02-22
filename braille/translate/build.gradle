@@ -66,12 +66,15 @@ task copyLibcxxShared {
 }
 
 tasks.whenTaskAdded { t ->
-    if (t.name.contains('merge') && t.name.endsWith('NativeLibs')) {
+    if (t.name.contains('merge') && (t.name.endsWith('NativeLibs') || t.name.endsWith('JniLibFolders'))) {
         t.dependsOn copyLibcxxShared
     }
 }
 
 android {
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+    }
     externalNativeBuild {
         ndkBuild {
             path file('src/phone/jni/Android.mk')
