@@ -7,6 +7,18 @@ android {
             path file('src/phone/jni/Android.mk')
         }
     }
+    // liblouiswrap.so is linked with c++_shared; pack libc++_shared.so so it's in the AAR/APK.
+    sourceSets {
+        main {
+            def ndkDir = android.ndkDirectory
+            if (ndkDir != null && ndkDir.exists()) {
+                def cxxLibs = new File(ndkDir, "sources/cxx-stl/llvm-libc++/libs")
+                if (cxxLibs.exists()) {
+                    jniLibs.srcDirs += cxxLibs
+                }
+            }
+        }
+    }
 }
 
 dependencies {
