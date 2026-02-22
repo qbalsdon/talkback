@@ -63,13 +63,13 @@ jobs:
         echo "SIGNED_WEAR_ARTIFACT=${OUTPUT_FILE_WEAR}" >> $GITHUB_ENV
         echo "---------------------------------------------"
     - name: Upload Mobile App Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: app-phone-signed-${{ github.run_number }}.apk
         path: ${{ env.SIGNED_PHONE_ARTIFACT }}
 
     - name: Upload Wear App Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: app-wear-signed-${{ github.run_number }}.apk
         path: ${{ env.SIGNED_WEAR_ARTIFACT }}
