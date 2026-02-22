@@ -87,6 +87,13 @@ public class FailoverTextToSpeech {
   /** Maximum number of TTS error messages to print to the log. */
   private static final int MAX_LOG_MESSAGES = 10;
 
+  /**
+   * Delay (ms) before actually shutting down TTS. Allows the system to deliver any pending
+   * ITextToSpeechSessionCallback.onConnected() so it doesn't hit DeadObjectException when calling
+   * into our process after we've released the Binder.
+   */
+  private static final int TTS_SHUTDOWN_DELAY_MS = 200;
+
   /** Class defining constants used for describing speech parameters. */
   public static class SpeechParam {
     /** Float parameter for controlling speech volume. Range is {0 ... 2}. */
@@ -449,11 +456,20 @@ public class FailoverTextToSpeech {
     mResolver.unregisterContentObserver(mPitchObserver);
     mResolver.unregisterContentObserver(mRateObserver);
 
-    TextToSpeechUtils.attemptTtsShutdown(mTts);
+    final TextToSpeech ttsToShutdown = mTts;
+    final TextToSpeech tempTtsToShutdown = mTempTts;
     mTts = null;
-
-    TextToSpeechUtils.attemptTtsShutdown(mTempTts);
     mTempTts = null;
+
+    // Delay shutdown so any pending ITextToSpeechSessionCallback.onConnected() from the system
+    // can be delivered first; otherwise the system may hit DeadObjectException when calling into
+    // our process after we've released the Binder.
+    mHandler.postDelayed(
+        () -> {
+          TextToSpeechUtils.attemptTtsShutdown(ttsToShutdown);
+          TextToSpeechUtils.attemptTtsShutdown(tempTtsToShutdown);
+        },
+        TTS_SHUTDOWN_DELAY_MS);
   }
 
   /**
